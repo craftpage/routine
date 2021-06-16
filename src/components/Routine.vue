@@ -52,8 +52,11 @@ export default {
       items: []
     }
   },
+  created(){
+    this.get()
+  },
   mounted() {
-    this.get();
+    this.autoRemove()
   },
   watch:{
       items() {
@@ -80,12 +83,17 @@ export default {
         alert("登録しました")
     },
     autoRemove(){
-      let yesterday = listStorage.fetch('date')
-      let today = new Date().getDate()
-
-      if (yesterday != today){
-        for (let i = 0; i < this.itmes.length -1; i++){
-          this.items[i].done[i] = false
+      let yesterday = null
+      if (listStorage.fetch('date') !== (null || undefined)) {
+        yesterday = Number(listStorage.fetch('date'))
+      } else {
+        yesterday = Number(new Date().getDate())
+      }
+      console.log(yesterday +" 11")
+      let today = Number(new Date().getDate())
+      if (yesterday !== today){
+        for (let i = 1; i < Object.keys(this.items).length; i++){
+          this.items[i].done = true
         }
         window.localStorage.setItem("items", JSON.stringify(this.items, null, 4))
       }
@@ -98,7 +106,7 @@ export default {
     },
     done(id){
         this.items[id - 1]["done"] = false
-        
+        window.localStorage.setItem("items", JSON.stringify(this.items, null, 4))
         window.localStorage.setItem("date", new Date().getDate())
     }
   }
