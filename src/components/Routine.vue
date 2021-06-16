@@ -1,26 +1,43 @@
 <template>
   <h1>ルーチン確認リスト</h1>
-  <span>Edit:</span><input type="text" v-model="textVal"/><button v-on:click="add">add</button><br />
-  <span>Remove:</span><button v-on:click="remove">remove</button>
+  <div class="input-group mb-3">  
+    <span class="input-group-text" id="basic-addon1">Edit:</span>
+    <input type="text" class="form-control" v-model="textVal"/><button class="btn btn-primary addbutton" v-on:click="add">add</button><br />
+  </div>
 
-  <ul>
-        <li
+
+  <ul class="list-group">
+        <li class="list-group-item"
             v-for="item in items" 
             v-bind:key="item.id"
         >{{item.text}}
-        <button v-if="item.done"
+        <button 
+        class="btn btn-secondary okbutton"
+        v-if="item.done"
         v-on:click="done(item.id)">OK</button>
         </li>
     </ul>
+  <br /><br />
+  
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">Remove:</span>
+    <button
+    class="btn btn-primary"
+    v-on:click="remove">remove
+  </button></div>
 
-  <button v-on:click="entry">entry</button><br />
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">Entry:</span>
+    <button class="btn btn-dark" v-on:click="entry">entry</button>
+  </div>
+
 
 </template>
 
 <script>
 var listStorage = {
-  fetch: function(json) {
-    let list = window.localStorage.getItem(json)
+  fetch: function(obj) {
+    let list = window.localStorage.getItem(obj)
     return list
   }
 }
@@ -32,8 +49,7 @@ export default {
   },
   data() {
     return {
-      items: [],
-      confirm:[]
+      items: []
     }
   },
   mounted() {
@@ -46,32 +62,44 @@ export default {
   },
   methods:{
     get() {
-        if (JSON.parse(listStorage.fetch('items')) !== null){
+        if (JSON.parse(listStorage.fetch('items')) !== null) {
             this.items = JSON.parse(listStorage.fetch('items'))
-            this.date = JSON.parse(listStorage.fetch('date'))
         } else {
-            this.items = [{"id":1, "text":"ルーチン", "done":ture}]
-            this.date = [{"date": new Date()}]
+            this.items = [{"id":1, "text":"ルーチン", "done":false}]
         }
     },
     add(){
         this.items.push({
             "id": this.items.length + 1,
             "text":this.textVal,
-            "done":true
+            "done":true,
         })
     },
     entry(){
         window.localStorage.setItem("items", JSON.stringify(this.items, null, 4))
         alert("登録しました")
     },
+    autoRemove(){
+      let yesterday = listStorage.fetch('date')
+      let today = new Date().getDate()
+
+      if (yesterday != today){
+        for (let i = 0; i < this.itmes.length -1; i++){
+          this.items[i].done[i] = false
+        }
+        window.localStorage.setItem("items", JSON.stringify(this.items, null, 4))
+      }
+    },
     remove(){
+      if (window.confirm("すべて削除しますか?")) {
         window.localStorage.removeItem("items")
-        this.items = [{"id":1, "text":"ルーチン", "done":true}]
+        this.items = [{"id":1, "text":"ルーチン", "done":false}]        
+      }     
     },
     done(id){
         this.items[id - 1]["done"] = false
-        window.localStorage.setItem("items", JSON.stringify(this.items, null, 4))
+        
+        window.localStorage.setItem("date", new Date().getDate())
     }
   }
 }
