@@ -68,7 +68,7 @@ export default {
         if (JSON.parse(listStorage.fetch('items')) !== null) {
             this.items = JSON.parse(listStorage.fetch('items'))
         } else {
-            this.items = [{"id":1, "text":"ルーチン", "done":false}]
+            this.items = [{"id":1, "text":"Routine", "done":false}]
         }
     },
     add(){
@@ -101,7 +101,7 @@ export default {
     remove(){
       if (window.confirm("すべて削除しますか?")) {
         window.localStorage.removeItem("items")
-        this.items = [{"id":1, "text":"ルーチン", "done":false}]        
+        this.items = [{"id":1, "text":"Routine", "done":false}]        
       }     
     },
     done(id){
